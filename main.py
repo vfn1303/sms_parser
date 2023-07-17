@@ -86,13 +86,13 @@ start_kb.row('Выгрузить все', 'Получить ссылку для 
 async def cmd_start(message: Message):
     await message.reply_sticker('CAACAgIAAxkBAAEJty5ktRBJ7cp5zxIthBT1J53_JrG5AwACDg0AAlH5kEqZ_8tFy0kTLC8E', reply_markup=start_kb)   
 
-acl = (1547884469, 369701464,)
-admin_only = lambda message: message.from_user.id not in acl
+#acl = (1547884469, 369701464,)
+#admin_only = lambda message: message.from_user.id not in acl
 
-@dp.message_handler(admin_only, content_types=['any'])
-async def handle_unwanted_users(message: types.Message):
-    await bot.delete_message(message.chat.id, message.message_id)
-    return
+#@dp.message_handler(admin_only, content_types=['any'])
+#async def handle_unwanted_users(message: types.Message):
+#    await bot.delete_message(message.chat.id, message.message_id)
+#    return
 
 
 @dp.message_handler(Text(equals=['Выгрузить все'], ignore_case=True))
