@@ -25,7 +25,6 @@ except TypeError:
 dp = Dispatcher(bot)
 
 app = FastAPI()
-in_use = False
 
 
 @app.on_event("startup")
@@ -56,20 +55,24 @@ class Msg(BaseModel):
 
 @app.post("/sms")
 async def demo_post(inp: Msg):
-    if not in_use:
-        now = datetime.now()
-        message = inp.msg
-        start_row = re.findall(r'\[.*?\]', message) #[Александр Д] 
-        end_row = re.findall(r'\(.*?\)', message) #(Входящее - 900 )
-        message = re.findall(r'\].*?\(', message) #
-        data = message[0][2:len(message)-2].split()
-        data.insert(0,start_row[0])
-        data.append(end_row[0])
-        data.append(now.strftime('%d/%m/%Y'))
-        with open('table.csv', 'a', newline='') as tbl:
-            writer = csv.writer(tbl)
-            writer.writerow(data)
-        return {"error_code": 0}
+    now = datetime.now()
+    message = inp.msg
+    start_row = re.findall(r'\[.*?\]', message) #[Александр Д] 
+    end_row = re.findall(r'\(.*?\)', message) #(Входящее - 900 )
+    message = re.findall(r'\].*?\(', message) #
+    data = message[0][2:len(message)-2].split()
+    data.insert(0,start_row[0])
+    data.append(end_row[0])
+    #data.append(now.strftime('%d/%m/%Y'))
+    if 'зачисление' in data:
+        data.remove('зачисление')
+    elif 'Перевод' in data:
+        data.remove('Перевод')
+        data.remove('от')
+    with open('table.csv', 'a', newline='') as tbl:
+        writer = csv.writer(tbl)
+        writer.writerow(data)
+    return {"error_code": 0}
 
 
 #bot
@@ -95,12 +98,13 @@ async def cmd_start(message: Message):
 @dp.message_handler(Text(equals=['Выгрузить все'], ignore_case=True))
 async def nav_cal_handler(message: Message):
     read_file = pd.read_csv('table.csv')
+    with open('table.csv', 'a', newline='') as tbl:
+        writer = csv.writer(tbl)
+        writer.writerow('fin')
     #TODO check if older exists
     read_file.to_excel('table.xlsx', index=None, header=True)
     await message.answer_document(open("table.xlsx", "rb"))
 
 @dp.message_handler(Text(equals=['Получить ссылку для приложения'], ignore_case=True))
 async def url_cal_handler(message: Message):
-    await message.answer(f"""Ваша ссылка:
-                         `{WEBHOOK_HOST}/sms`
-                         """,parse_mode='Markdown')
+    await message.answer(f"Ваша ссылка:`{WEBHOOK_HOST}/sms",parse_mode='Markdown')
