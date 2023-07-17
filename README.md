@@ -10,7 +10,6 @@ tags:
 
 This example starts up a [FastAPI](https://fastapi.tiangolo.com/) server.
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/-NvLj4?referralCode=milo)
 ## ✨ Features
 
 - FastAPI
