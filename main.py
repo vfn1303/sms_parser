@@ -12,7 +12,13 @@ import csv, os, re, datetime
 load_dotenv()
 
 try:
+    WEBHOOK_HOST = os.getenv('WEBHOOK_HOST')
+    WEBAPP_HOST = os.getenv('WEBAPP_HOST')
+    WEBAPP_PORT = os.getenv('WEBAPP_PORT')
     bot = Bot(token=os.getenv('TOKEN'))
+    WEBHOOK_PATH = os.getenv('WEBHOOK_PATH')
+    WEBHOOK_URL = WEBHOOK_HOST + WEBHOOK_PATH + os.getenv('TOKEN')
+    print(WEBHOOK_URL)
 except TypeError:
     exit('Create .env')
 dp = Dispatcher(bot)
@@ -40,7 +46,6 @@ async def demo_post(inp: Msg):
             writer = csv.writer(tbl)
             writer.writerow(data)
         return {"error_code": 0}
-    
 
 
 #bot
@@ -60,8 +65,7 @@ start_kb.row('Выгрузить все')
 
 @dp.message_handler(commands=['start'])
 async def cmd_start(message: Message):
-    await message.reply_sticker('CAACAgIAAxkBAAEJty5ktRBJ7cp5zxIthBT1J53_JrG5AwACDg0AAlH5kEqZ_8tFy0kTLC8E', reply_markup=start_kb)
-    
+    await message.reply_sticker('CAACAgIAAxkBAAEJty5ktRBJ7cp5zxIthBT1J53_JrG5AwACDg0AAlH5kEqZ_8tFy0kTLC8E', reply_markup=start_kb)    
 
 
 @dp.message_handler(Text(equals=['Выгрузить все'], ignore_case=True))
@@ -74,4 +78,21 @@ async def nav_cal_handler(message: Message):
 
 @app.on_event("startup")
 async def on_startup():
-    executor.start_polling(dp, skip_updates=True)
+    webhook_info = await bot.get_webhook_info()
+    if webhook_info.url != WEBHOOK_URL:
+        await bot.set_webhook(
+            url=WEBHOOK_URL
+        )
+
+
+@app.post(WEBHOOK_PATH)
+async def bot_webhook(update: dict):
+    telegram_update = types.Update(**update)
+    Dispatcher.set_current(dp)
+    Bot.set_current(bot)
+    await dp.process_update(telegram_update)
+
+
+@app.on_event("shutdown")
+async def on_shutdown():
+    await bot.session.close()
