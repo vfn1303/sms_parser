@@ -47,6 +47,7 @@ async def bot_webhook(update: dict):
 @app.on_event("shutdown")
 async def on_shutdown():
     await bot.session.close()
+    await bot.delete_webhook()
 
 
 class Msg(BaseModel):
