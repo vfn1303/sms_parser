@@ -16,8 +16,8 @@ try:
     WEBAPP_HOST = os.getenv('WEBAPP_HOST')
     WEBAPP_PORT = os.getenv('WEBAPP_PORT')
     bot = Bot(token=os.getenv('TOKEN'))
-    WEBHOOK_PATH = os.getenv('WEBHOOK_PATH')
-    WEBHOOK_URL = WEBHOOK_HOST + WEBHOOK_PATH + os.getenv('TOKEN')
+    WEBHOOK_PATH = os.getenv('WEBHOOK_PATH') + os.getenv('TOKEN')
+    WEBHOOK_URL = WEBHOOK_HOST + WEBHOOK_PATH 
     print(WEBHOOK_URL)
 except TypeError:
     exit('Create .env')
