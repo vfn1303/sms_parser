@@ -14,7 +14,7 @@ load_dotenv()
 try:
     WEBHOOK_HOST = os.getenv('WEBHOOK_HOST')
     WEBAPP_HOST = os.getenv('WEBAPP_HOST')
-    WEBAPP_PORT = os.getenv('WEBAPP_PORT')
+    WEBAPP_PORT = os.getenv('PORT')
     bot = Bot(token=os.getenv('TOKEN'))
     WEBHOOK_PATH = os.getenv('WEBHOOK_PATH') + os.getenv('TOKEN')
     WEBHOOK_URL = WEBHOOK_HOST + WEBHOOK_PATH 
