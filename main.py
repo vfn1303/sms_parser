@@ -28,6 +28,9 @@ dp = Dispatcher(bot)
 app = FastAPI()
 
 
+def ping():
+    bot.send_message(369701464,"test")
+
 @app.on_event("startup")
 async def on_startup():
     webhook_info = await bot.get_webhook_info()
@@ -36,6 +39,9 @@ async def on_startup():
             url=WEBHOOK_URL,
             drop_pending_updates=True
         )
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(ping, 'cron', second='*/10')
+    scheduler.start()    
 
 
 @app.post(WEBHOOK_PATH)
@@ -78,7 +84,8 @@ async def demo_post(inp: Msg):
     return {"error_code": 0}
 
 
-#bot
+
+""" #bot
 acl = (1547884469, 369701464,)
 admin_only = lambda message: message.from_user.id not in acl
 
@@ -109,4 +116,4 @@ async def nav_cal_handler(message: Message):
 
 @dp.message_handler(Text(equals=['Получить ссылку для приложения'], ignore_case=True))
 async def url_cal_handler(message: Message):
-    await message.answer(f"Ваша ссылка:\n`{WEBHOOK_HOST}/sms`",parse_mode='Markdown')
+    await message.answer(f"Ваша ссылка:\n`{WEBHOOK_HOST}/sms`",parse_mode='Markdown') """
