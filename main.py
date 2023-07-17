@@ -28,8 +28,8 @@ dp = Dispatcher(bot)
 app = FastAPI()
 
 
-def ping():
-    bot.send_message(369701464,"test")
+async def ping():
+    await bot.send_message(369701464,"test")
 
 @app.on_event("startup")
 async def on_startup():
