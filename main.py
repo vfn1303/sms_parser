@@ -57,7 +57,7 @@ class Msg(BaseModel):
 @app.post("/sms")
 async def demo_post(inp: Msg):
     #now = datetime.now()
-    message = inp.msg
+    message = inp.message
     start_row = re.findall(r'\[.*?\]', message) #[Александр Д] 
     end_row = re.findall(r'\(.*?\)', message) #(Входящее - 900 )
     message = re.findall(r'\].*?\(', message) #
