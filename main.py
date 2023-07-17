@@ -84,7 +84,7 @@ async def handle_unwanted_users(message: types.Message):
 
 
 start_kb = ReplyKeyboardMarkup(resize_keyboard=True,)
-start_kb.row('Выгрузить все')
+start_kb.row('Выгрузить все', 'Получить ссылку для приложения')
 
 
 @dp.message_handler(commands=['start'])
@@ -98,3 +98,11 @@ async def nav_cal_handler(message: Message):
     #TODO check if older exists
     read_file.to_excel('table.xlsx', index=None, header=True)
     await message.answer_document(open("table.xlsx", "rb"))
+
+@dp.message_handler(Text(equals=['Получить ссылку для приложения'], ignore_case=True))
+async def url_cal_handler(message: Message):
+    await message.answer(f"""Ваша ссылка:
+                         
+                         '{WEBHOOK_HOST}/sms'
+                         
+                         """parse_mode='Markdown')
