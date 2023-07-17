@@ -99,9 +99,9 @@ async def cmd_start(message: Message):
 @dp.message_handler(Text(equals=['Выгрузить все'], ignore_case=True))
 async def nav_cal_handler(message: Message):
     #read_file = pd.read_csv('table.csv',delimiter=',')
-    #with open('table.csv', 'a', newline='') as tbl:
-    #    writer = csv.writer(tbl)
-    #    writer.writerow('fin, test')
+    with open('table.csv', 'a', newline='') as tbl:
+        writer = csv.writer(tbl)
+        writer.writerow(['fin','row'])
     #    print(tbl)
     #TODO check if older exists
     #read_file.to_excel('table.xlsx', index=None, header=False)
