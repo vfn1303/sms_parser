@@ -72,6 +72,7 @@ async def demo_post(inp: Msg):
     with open('table.csv', 'a', newline='') as tbl:
         writer = csv.writer(tbl)
         writer.writerow(data)
+        print(tbl)
     return {"error_code": 0}
 
 
@@ -101,6 +102,7 @@ async def nav_cal_handler(message: Message):
     with open('table.csv', 'a', newline='') as tbl:
         writer = csv.writer(tbl)
         writer.writerow('fin, test')
+        print(tbl)
     #TODO check if older exists
     read_file.to_excel('table.xlsx', index=None, header=False)
     await message.answer_document(open("table.xlsx", "rb"))
