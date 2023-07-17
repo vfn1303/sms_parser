@@ -71,5 +71,4 @@ async def nav_cal_handler(message: Message):
     read_file.to_excel('table.xlsx', index=None, header=True)
     await message.answer_document(open("table.xlsx", "rb"))
 
-if __name__ == '__main__':
-    executor.start_polling(dp, skip_updates=True)
+executor.start_polling(dp, skip_updates=True)
