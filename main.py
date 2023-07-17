@@ -109,4 +109,4 @@ async def nav_cal_handler(message: Message):
 
 @dp.message_handler(Text(equals=['Получить ссылку для приложения'], ignore_case=True))
 async def url_cal_handler(message: Message):
-    await message.answer(f"Ваша ссылка:`{WEBHOOK_HOST}`/sms",parse_mode='Markdown')
+    await message.answer(f"Ваша ссылка:\n`{WEBHOOK_HOST}/sms`",parse_mode='Markdown')
