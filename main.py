@@ -7,7 +7,7 @@ from aiogram.types import Message, ReplyKeyboardMarkup
 from aiogram.dispatcher.filters import Text
 import pandas as pd
 from dotenv import load_dotenv
-import csv, os, re, datetime
+import csv, os, re
 
 load_dotenv()
 
@@ -46,8 +46,8 @@ async def bot_webhook(update: dict):
 
 @app.on_event("shutdown")
 async def on_shutdown():
-    #await bot.session.close()
     await bot.delete_webhook()
+    await bot.close()
 
 
 class Msg(BaseModel):
@@ -56,7 +56,7 @@ class Msg(BaseModel):
 
 @app.post("/sms")
 async def demo_post(inp: Msg):
-    now = datetime.now()
+    #now = datetime.now()
     message = inp.msg
     start_row = re.findall(r'\[.*?\]', message) #[Александр Д] 
     end_row = re.findall(r'\(.*?\)', message) #(Входящее - 900 )
