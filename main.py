@@ -8,7 +8,7 @@ from aiogram.dispatcher.filters import Text
 import pandas as pd
 from dotenv import load_dotenv
 import csv, os, re
-from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 load_dotenv()
 
@@ -39,7 +39,8 @@ async def on_startup():
             url=WEBHOOK_URL,
             drop_pending_updates=True
         )
-    scheduler = BackgroundScheduler()
+    
+    scheduler = AsyncIOScheduler(timezone='Europe/Moscow')
     scheduler.add_job(ping, 'cron', second='*/10')
     scheduler.start()    
 
