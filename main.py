@@ -33,7 +33,8 @@ async def on_startup():
     webhook_info = await bot.get_webhook_info()
     if webhook_info.url != WEBHOOK_URL:
         await bot.set_webhook(
-            url=WEBHOOK_URL
+            url=WEBHOOK_URL,
+            drop_pending_updates=True
         )
 
 
@@ -47,8 +48,8 @@ async def bot_webhook(update: dict):
 
 @app.on_event("shutdown")
 async def on_shutdown():
-    await bot.delete_webhook()
-    await bot.close()
+    await bot.delete_webhook(drop_pending_updates=True)
+    #await bot.close()
 
 
 class Msg(BaseModel):
@@ -78,6 +79,14 @@ async def demo_post(inp: Msg):
 
 
 #bot
+acl = (1547884469, 369701464,)
+admin_only = lambda message: message.from_user.id not in acl
+
+@dp.message_handler(admin_only, content_types=['any'])
+async def handle_unwanted_users(message: types.Message):
+    await bot.delete_message(message.chat.id, message.message_id)
+    return
+
 
 start_kb = ReplyKeyboardMarkup(resize_keyboard=True)
 start_kb.row('Выгрузить все', 'Получить ссылку для приложения')
@@ -85,14 +94,6 @@ start_kb.row('Выгрузить все', 'Получить ссылку для 
 @dp.message_handler(commands=['start'])
 async def cmd_start(message: Message):
     await message.reply_sticker('CAACAgIAAxkBAAEJty5ktRBJ7cp5zxIthBT1J53_JrG5AwACDg0AAlH5kEqZ_8tFy0kTLC8E', reply_markup=start_kb)   
-
-#acl = (1547884469, 369701464,)
-#admin_only = lambda message: message.from_user.id not in acl
-
-#@dp.message_handler(admin_only, content_types=['any'])
-#async def handle_unwanted_users(message: types.Message):
-#    await bot.delete_message(message.chat.id, message.message_id)
-#    return
 
 
 @dp.message_handler(Text(equals=['Выгрузить все'], ignore_case=True))
