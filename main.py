@@ -12,19 +12,43 @@ import csv, os, re, datetime
 load_dotenv()
 
 try:
-    WEBHOOK_HOST = os.getenv('WEBHOOK_HOST')
-    WEBAPP_HOST = os.getenv('WEBAPP_HOST')
-    WEBAPP_PORT = os.getenv('PORT')
+    WEBHOOK_HOST = os.getenv('RAILWAY_STATIC_URL')
+    #WEBAPP_HOST = os.getenv('WEBAPP_HOST')
+    #WEBAPP_PORT = os.getenv('PORT')
     bot = Bot(token=os.getenv('TOKEN'))
     WEBHOOK_PATH = os.getenv('WEBHOOK_PATH') + os.getenv('TOKEN')
     WEBHOOK_URL = WEBHOOK_HOST + WEBHOOK_PATH 
     print(WEBHOOK_URL)
+    print(WEBHOOK_PATH)
 except TypeError:
     exit('Create .env')
 dp = Dispatcher(bot)
 
 app = FastAPI()
 in_use = False
+
+
+@app.on_event("startup")
+async def on_startup():
+    webhook_info = await bot.get_webhook_info()
+    if webhook_info.url != WEBHOOK_URL:
+        await bot.set_webhook(
+            url=WEBHOOK_URL
+        )
+
+
+@app.post(WEBHOOK_PATH)
+async def bot_webhook(update: dict):
+    telegram_update = types.Update(**update)
+    Dispatcher.set_current(dp)
+    Bot.set_current(bot)
+    await dp.process_update(telegram_update)
+
+
+@app.on_event("shutdown")
+async def on_shutdown():
+    await bot.session.close()
+
 
 class Msg(BaseModel):
     sub: str
@@ -74,25 +98,3 @@ async def nav_cal_handler(message: Message):
     #TODO check if older exists
     read_file.to_excel('table.xlsx', index=None, header=True)
     await message.answer_document(open("table.xlsx", "rb"))
-
-
-@app.on_event("startup")
-async def on_startup():
-    webhook_info = await bot.get_webhook_info()
-    if webhook_info.url != WEBHOOK_URL:
-        await bot.set_webhook(
-            url=WEBHOOK_URL
-        )
-
-
-@app.post(WEBHOOK_PATH)
-async def bot_webhook(update: dict):
-    telegram_update = types.Update(**update)
-    Dispatcher.set_current(dp)
-    Bot.set_current(bot)
-    await dp.process_update(telegram_update)
-
-
-@app.on_event("shutdown")
-async def on_shutdown():
-    await bot.session.close()
