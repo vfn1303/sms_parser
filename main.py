@@ -79,7 +79,7 @@ async def demo_post(inp: Msg):
 
 #bot
 
-start_kb = ReplyKeyboardMarkup(resize_keyboard=True,)
+start_kb = ReplyKeyboardMarkup(resize_keyboard=True)
 start_kb.row('Выгрузить все', 'Получить ссылку для приложения')
 
 @dp.message_handler(commands=['start'])
