@@ -9,6 +9,7 @@ import pandas as pd
 from dotenv import load_dotenv
 import csv, os, re
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
 
 load_dotenv()
 
@@ -39,9 +40,11 @@ async def on_startup():
             url=WEBHOOK_URL,
             drop_pending_updates=True
         )
-    
+    trigger = CronTrigger(
+        year="*", month="*", day="*", hour="0", minute="0", second="1"
+    )
     scheduler = AsyncIOScheduler(timezone='Europe/Moscow')
-    scheduler.add_job(ping, 'cron', second='*/10')
+    scheduler.add_job(ping, trigger=trigger)
     scheduler.start()    
 
 
@@ -82,6 +85,7 @@ async def demo_post(inp: Msg):
     with open('table.csv', 'a', newline='') as tbl:
         writer = csv.writer(tbl)
         writer.writerow(data)
+        print(data)
     return {"error_code": 0}
 
 
