@@ -4,7 +4,8 @@ from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.types import Message
 from dotenv import load_dotenv
-import csv, os, re, datetime
+import csv, os, re
+from datetime import datetime
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from urllib.parse import urlencode
