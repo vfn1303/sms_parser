@@ -48,11 +48,13 @@ async def on_startup():
             url=WEBHOOK_URL
         )
     trigger = CronTrigger(
-        year="*", month="*", day="*", hour="18", minute="0", second="1"
+        year="*", month="*", day="*", hour="15", minute="20", second="1"
     )
     scheduler = AsyncIOScheduler()
     scheduler.add_job(send_csv, trigger=trigger)
     scheduler.start()    
+    for id in acl:
+        await bot.send_message(id,'Бот включен!')
 
 
 @app.post(WEBHOOK_PATH)
@@ -117,7 +119,7 @@ async def demo_post(inp: Msg):
 @dp.message_handler(commands=['start'])
 async def cmd_start(message: Message):
     if message.from_user.id in acl:
-        await bot.send_sticker('CAACAgIAAxkBAAEJum1ktmegUWrXDXVBsZp-uzbJioZyNgACfQwAAsoPQEpP5RyRY3qVai8E')
+        await bot.send_sticker(message.from_user.id,'CAACAgIAAxkBAAEJum1ktmegUWrXDXVBsZp-uzbJioZyNgACfQwAAsoPQEpP5RyRY3qVai8E')
         await bot.send_message(message.from_user.id,f"Ваша ссылка:\n`https://{WEBHOOK_HOST}/sms`",parse_mode='Markdown')
 
 """ #bot
