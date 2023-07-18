@@ -69,24 +69,29 @@ class Msg(BaseModel):
 @app.post("/sms")
 async def demo_post(inp: Msg):
     print(inp)
-    message = inp.message
-    start_row = re.findall(r'\[.*?\]', message) #[Александр Д] 
-    end_row = re.findall(r'\(.*?\)', message) #(Входящее - 900 )f
-    message = re.findall(r'\].*?\(', message) #
-    data = message[0][2:len(message)-2].split()
-    data.insert(0,start_row[0])
-    data.append(end_row[0])
-    #data.append(now.strftime('%d/%m/%Y'))
-    if 'зачисление' in data:
-        data.remove('зачисление')
-    elif 'Перевод' in data:
-        data.remove('Перевод')
-        data.remove('от')
-    with open('table.csv', 'a', newline='') as tbl:
-        writer = csv.writer(tbl)
-        writer.writerow(data)
-        print(data)
-    return {"error_code": 0}
+    try:
+        message = inp.message
+        start_row = re.findall(r'\[.*?\]', message) #[Александр Д] 
+        end_row = re.findall(r'\(.*?\)', message) #(Входящее - 900 )f
+        message = re.findall(r'\].*?\(', message) #
+        data = message[0][2:len(message)-2].split()
+        data.insert(0,start_row[0])
+        data.append(end_row[0])
+        #data.append(now.strftime('%d/%m/%Y'))
+        if 'зачисление' in data:
+            data.remove('зачисление')
+        elif 'Перевод' in data:
+            data.remove('Перевод')
+            data.remove('от')
+        with open('table.csv', 'a', newline='') as tbl:
+            writer = csv.writer(tbl)
+            writer.writerow(data)
+            print(data)
+        return {"error_code": 0}
+    except:
+        print('Cant parse message')
+        return {"error_code": 1}
+
 
 
 
