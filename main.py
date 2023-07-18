@@ -33,6 +33,7 @@ async def send_csv():
     await bot.send_sticker('CAACAgIAAxkBAAEJty5ktRBJ7cp5zxIthBT1J53_JrG5AwACDg0AAlH5kEqZ_8tFy0kTLC8E')
     for id in acl:
         await bot.send_document(id,open("table.csv", "rb"))
+    open('table.csv', 'w').close()
     
 
 @app.on_event("startup")
