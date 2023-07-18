@@ -43,14 +43,14 @@ async def on_startup():
     now = datetime.now()
     print(now.strftime("%H:%M:%S"))
     webhook_info = await bot.get_webhook_info()
-    if webhook_info.url != urlencode(WEBHOOK_URL):
+    if webhook_info.url != WEBHOOK_URL:
         await bot.set_webhook(
-            url=urlencode(WEBHOOK_URL)
+            url=WEBHOOK_URL
         )
     trigger = CronTrigger(
         year="*", month="*", day="*", hour="18", minute="0", second="1"
     )
-    scheduler = AsyncIOScheduler(timezone='Europe/Moscow')
+    scheduler = AsyncIOScheduler()
     scheduler.add_job(send_csv, trigger=trigger)
     scheduler.start()    
 
