@@ -39,7 +39,8 @@ async def send_csv():
 
 @app.on_event("startup")
 async def on_startup():
-    print(datetime.time.hour)
+    now = datetime.now()
+    print(now.strftime("%H:%M:%S"))
     webhook_info = await bot.get_webhook_info()
     if webhook_info.url != urlencode(WEBHOOK_URL):
         await bot.set_webhook(
