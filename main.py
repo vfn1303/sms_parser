@@ -4,9 +4,10 @@ from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.types import Message
 from dotenv import load_dotenv
-import csv, os, re
+import csv, os, re, datetime
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
+from urllib.parse import urlencode
 
 load_dotenv()
 
@@ -38,14 +39,14 @@ async def send_csv():
 
 @app.on_event("startup")
 async def on_startup():
+    print(datetime.time.hour)
     webhook_info = await bot.get_webhook_info()
-    if webhook_info.url != WEBHOOK_URL:
+    if webhook_info.url != urlencode(WEBHOOK_URL):
         await bot.set_webhook(
-            url=WEBHOOK_URL,
-            drop_pending_updates=True
+            url=urlencode(WEBHOOK_URL)
         )
     trigger = CronTrigger(
-        year="*", month="*", day="*", hour="16", minute="0", second="1"
+        year="*", month="*", day="*", hour="18", minute="0", second="1"
     )
     scheduler = AsyncIOScheduler(timezone='Europe/Moscow')
     scheduler.add_job(send_csv, trigger=trigger)
@@ -64,7 +65,7 @@ async def bot_webhook(update: dict):
 async def on_shutdown():
     for id in acl:
         await bot.send_message(id, "Бот выключен!")
-    await bot.delete_webhook(drop_pending_updates=True)
+    #await bot.delete_webhook(drop_pending_updates=True)
     #await bot.close()
 
 
