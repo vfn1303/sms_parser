@@ -133,9 +133,8 @@ async def cmd_start(message: Message):
 async def send_table(message: Message):
     try:
         if message.from_user.id in acl:
-            await bot.send_document(id,open("table.csv", "rb")) 
-    except:
-        print('amd not started bot!!!')
+            await bot.send_document(message.from_user.id,open("table.csv", "rb")) 
+    except Exception as e: print(e)
 
 """ #bot
 acl = (1547884469, 369701464,)
