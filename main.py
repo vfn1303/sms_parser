@@ -54,7 +54,10 @@ async def on_startup():
     scheduler.add_job(send_csv, trigger=trigger)
     scheduler.start()    
     for id in acl:
-        await bot.send_message(id,'Бот включен!')
+        try:
+            await bot.send_message(id,'Бот включен!')
+        except:
+            print('adm not started bot')
 
 
 @app.post(WEBHOOK_PATH)
@@ -67,8 +70,11 @@ async def bot_webhook(update: dict):
 
 @app.on_event("shutdown")
 async def on_shutdown():
-    for id in acl:
-        await bot.send_message(id, "Бот выключен!")
+    try:
+        for id in acl:
+            await bot.send_message(id, "Бот выключен!")
+    except:
+        print('amd not started bot')
     #await bot.delete_webhook(drop_pending_updates=True)
     #await bot.close()
 
@@ -125,8 +131,11 @@ async def cmd_start(message: Message):
 
 @dp.message_handler()
 async def cmd_start(message: Message):
-    if message.from_user.id in acl:
-        await bot.send_document(id,open("table.csv", "rb"))
+    try:
+        if message.from_user.id in acl:
+            await bot.send_document(id,open("table.csv", "rb")) 
+    except:
+        print('amd not started bot!!!')
 
 """ #bot
 acl = (1547884469, 369701464,)
