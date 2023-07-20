@@ -35,7 +35,7 @@ async def send_csv():
     await bot.send_sticker('CAACAgIAAxkBAAEJty5ktRBJ7cp5zxIthBT1J53_JrG5AwACDg0AAlH5kEqZ_8tFy0kTLC8E')
     for id in acl:
         await bot.send_document(id,open("table.csv", "rb"))
-    open('table.csv', 'w').close()
+    #open('table.csv', 'w').close()
     
 
 @app.on_event("startup")
@@ -48,7 +48,7 @@ async def on_startup():
             url=WEBHOOK_URL
         )
     trigger = CronTrigger(
-        year="*", month="*", day="*", hour="15", minute="20", second="1"
+        year="*", month="*", day="*", hour="21", minute="1", second="1"
     )
     scheduler = AsyncIOScheduler()
     scheduler.add_job(send_csv, trigger=trigger)
@@ -121,6 +121,12 @@ async def cmd_start(message: Message):
     if message.from_user.id in acl:
         await bot.send_sticker(message.from_user.id,'CAACAgIAAxkBAAEJum1ktmegUWrXDXVBsZp-uzbJioZyNgACfQwAAsoPQEpP5RyRY3qVai8E')
         await bot.send_message(message.from_user.id,f"Ваша ссылка:\n`https://{WEBHOOK_HOST}/sms`",parse_mode='Markdown')
+
+
+@dp.message_handler()
+async def cmd_start(message: Message):
+    if message.from_user.id in acl:
+        await bot.send_document(id,open("table.csv", "rb"))
 
 """ #bot
 acl = (1547884469, 369701464,)
