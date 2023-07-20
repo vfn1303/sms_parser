@@ -129,8 +129,8 @@ async def cmd_start(message: Message):
         await bot.send_message(message.from_user.id,f"Ваша ссылка:\n`https://{WEBHOOK_HOST}/sms`",parse_mode='Markdown')
 
 
-@dp.message_handler()
-async def cmd_start(message: Message):
+@dp.message_handler(commands=['table'])
+async def send_table(message: Message):
     try:
         if message.from_user.id in acl:
             await bot.send_document(id,open("table.csv", "rb")) 
