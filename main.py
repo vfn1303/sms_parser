@@ -114,6 +114,9 @@ async def demo_post(inp: Msg):
             data[4]=data[4][:-1]
             data.insert(4,name)
         if len(data) != 5 or 'СЧЕТ' in message:
+            if data[-2] == '': data.pop(-2)
+            if 'перевод' in data: data.remove('перевод')
+            if 'Баланс:' in data: data.remove('Баланс:')
             with open('table2.csv', 'a', newline='') as tbl:
                 writer = csv.writer(tbl)
                 writer.writerow(data)
