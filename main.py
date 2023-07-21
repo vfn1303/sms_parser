@@ -10,7 +10,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from urllib.parse import urlencode
 import pandas as pd
-import openpyxl
+from openpyxl import Workbook
 
 load_dotenv()
 
@@ -37,12 +37,13 @@ async def send_csv():
     for id in acl:
         await bot.send_sticker(id,'CAACAgIAAxkBAAEJty5ktRBJ7cp5zxIthBT1J53_JrG5AwACDg0AAlH5kEqZ_8tFy0kTLC8E')
         try:
-            with pd.ExcelWriter('output.xlsx') as writer:
+            with pd.ExcelWriter('output.xlsx', engine="openpyxl") as writer:
                 df = pd.read_csv('table.csv')
                 df.to_excel(writer, sheet_name='1', index=False)
                 df1 = pd.read_csv('table2.csv')
                 df1.to_excel(writer, sheet_name='2', index=False)
-                
+                writer.save()
+
                 await bot.send_document(id,open("output.xlsx", "rb")) 
         except Exception as e: print(e)
     open('output.xlsx', 'w').close()
@@ -151,11 +152,12 @@ async def cmd_start(message: Message):
 @dp.message_handler(commands=['table'])
 async def send_table(message: Message):
     try:
-        with pd.ExcelWriter('output.xlsx') as writer:
+        with pd.ExcelWriter('output.xlsx', engine="openpyxl") as writer:
             df = pd.read_csv('table.csv')
             df.to_excel(writer, sheet_name='1', index=False)
             df1 = pd.read_csv('table2.csv')
             df1.to_excel(writer, sheet_name='2', index=False)
+            writer.save()
 
         if message.from_user.id in acl:
             await bot.send_document(message.from_user.id,open("output.xlsx", "rb")) 
