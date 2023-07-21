@@ -35,6 +35,8 @@ async def send_csv():
         await bot.send_sticker(id,'CAACAgIAAxkBAAEJty5ktRBJ7cp5zxIthBT1J53_JrG5AwACDg0AAlH5kEqZ_8tFy0kTLC8E')
         try:
             await bot.send_document(id,open("table.csv", "rb")) 
+        except Exception as e: print(e)
+        try:
             await bot.send_document(id,open("table2.csv", "rb"))
         except Exception as e: print(e)
     open('table.csv', 'w').close()
@@ -114,7 +116,7 @@ async def demo_post(inp: Msg):
             data[3]=data[3][:-1]
             data[4]=data[4][:-1]
             data.insert(4,name)
-        if len(data) != 5 or 'СЧЕТ' in message:
+        if 'СЧЕТ' in message:
             if data[-2] == '': data.pop(-2)
             if 'перевод' in data: data.remove('перевод')
             if 'Баланс:' in data: data.remove('Баланс:')
@@ -143,11 +145,13 @@ async def cmd_start(message: Message):
 
 @dp.message_handler(commands=['table'])
 async def send_table(message: Message):
-    try:
-        if message.from_user.id in acl:
+    if message.from_user.id in acl:
+        try:
             await bot.send_document(id,open("table.csv", "rb")) 
+        except Exception as e: print(e)
+        try:
             await bot.send_document(id,open("table2.csv", "rb"))
-    except Exception as e: print(e)
+        except Exception as e: print(e)
 
 """ #bot
 acl = (1547884469, 369701464,)
