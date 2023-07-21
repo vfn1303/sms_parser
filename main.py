@@ -8,6 +8,7 @@ import csv, os, re
 from datetime import datetime
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
+from urllib.parse import urlencode
 
 load_dotenv()
 
@@ -31,16 +32,10 @@ app = FastAPI()
 acl = (1547884469, 369701464)
 
 async def send_csv():
+    #await bot.send_sticker('CAACAgIAAxkBAAEJty5ktRBJ7cp5zxIthBT1J53_JrG5AwACDg0AAlH5kEqZ_8tFy0kTLC8E')
     for id in acl:
-        await bot.send_sticker(id,'CAACAgIAAxkBAAEJty5ktRBJ7cp5zxIthBT1J53_JrG5AwACDg0AAlH5kEqZ_8tFy0kTLC8E')
-        try:
-            await bot.send_document(id,open("table.csv", "rb")) 
-        except Exception as e: print(e)
-        try:
-            await bot.send_document(id,open("table2.csv", "rb"))
-        except Exception as e: print(e)
-    open('table.csv', 'w').close()
-    open('table2.csv', 'w').close()
+        await bot.send_document(id,open("table.csv", "rb"))
+    #open('table.csv', 'w').close()
     
 
 @app.on_event("startup")
@@ -99,7 +94,7 @@ async def demo_post(inp: Msg):
         data = message[0][2:len(message)-2].split()
         data.insert(0,start_row[0])
         #data.append(end_row[0])
-        #data.append(now.strftime('%d/%m/%Y')
+        #data.append(now.strftime('%d/%m/%Y'))
         if 'зачисление' in data:
             data.remove('зачисление')
             name = data[3:data.index('Баланс:')+1]
@@ -116,15 +111,6 @@ async def demo_post(inp: Msg):
             data[3]=data[3][:-1]
             data[4]=data[4][:-1]
             data.insert(4,name)
-        if 'СЧЕТ' in message:
-            if data[-2] == '': data.pop(-2)
-            if 'перевод' in data: data.remove('перевод')
-            if 'Баланс:' in data: data.remove('Баланс:')
-            with open('table2.csv', 'a', newline='') as tbl:
-                writer = csv.writer(tbl)
-                writer.writerow(data)
-                print('cant parse:' ,data)
-            return {"error_code": 0}
         with open('table.csv', 'a', newline='') as tbl:
             writer = csv.writer(tbl)
             writer.writerow(data)
@@ -145,13 +131,10 @@ async def cmd_start(message: Message):
 
 @dp.message_handler(commands=['table'])
 async def send_table(message: Message):
-    if message.from_user.id in acl:
-        try:
-            await bot.send_document(id,open("table.csv", "rb")) 
-        except Exception as e: print(e)
-        try:
-            await bot.send_document(id,open("table2.csv", "rb"))
-        except Exception as e: print(e)
+    try:
+        if message.from_user.id in acl:
+            await bot.send_document(message.from_user.id,open("table.csv", "rb")) 
+    except Exception as e: print(e)
 
 """ #bot
 acl = (1547884469, 369701464,)
