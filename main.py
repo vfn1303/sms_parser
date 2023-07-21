@@ -10,7 +10,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from urllib.parse import urlencode
 import pandas as pd
-import pathlib
+import openpyxl
 
 load_dotenv()
 
@@ -36,8 +36,16 @@ acl = (1547884469, 369701464)
 async def send_csv():
     for id in acl:
         await bot.send_sticker(id,'CAACAgIAAxkBAAEJty5ktRBJ7cp5zxIthBT1J53_JrG5AwACDg0AAlH5kEqZ_8tFy0kTLC8E')
-        await bot.send_document(id,open("output.xlsx", "rb"))
-    #open('table.csv', 'w').close()
+        try:
+            with pd.ExcelWriter('output.xlsx') as writer:
+                df = pd.read_csv('table.csv')
+                df.to_excel(writer, sheet_name='1', index=False)
+                df1 = pd.read_csv('table2.csv')
+                df1.to_excel(writer, sheet_name='2', index=False)
+                
+                await bot.send_document(id,open("output.xlsx", "rb")) 
+        except Exception as e: print(e)
+    open('output.xlsx', 'w').close()
     
 
 @app.on_event("startup")
