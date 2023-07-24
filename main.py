@@ -4,11 +4,12 @@ from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.types import Message
 from dotenv import load_dotenv
-import csv, os, re
+import csv, os, re, glob
 from datetime import datetime
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from urllib.parse import urlencode
+from xlsxwriter.workbook import Workbook
 
 load_dotenv()
 
@@ -33,9 +34,20 @@ acl = (1547884469, 369701464)
 
 async def send_csv():
     #await bot.send_sticker('CAACAgIAAxkBAAEJty5ktRBJ7cp5zxIthBT1J53_JrG5AwACDg0AAlH5kEqZ_8tFy0kTLC8E')
+    workbook = Workbook('table.xlsx')
+    for csvfile in glob.glob(os.path.join('.', '*.csv')):
+        with open(csvfile, 'rt', encoding='utf8') as f:
+            worksheet = workbook.add_worksheet(csvfile[2:-4] + 'Sheet') 
+            reader = csv.reader(f)
+            for r, row in enumerate(reader):
+                for c, col in enumerate(row):
+                    worksheet.write(r, c, col)
+    workbook.close()
     for id in acl:
-        await bot.send_document(id,open("table.csv", "rb"))
-    #open('table.csv', 'w').close()
+        #await bot.send_document(id,open("table.csv", "rb"))
+        
+        await bot.send_document(id,open("table.xlsx", "rb")) 
+    open('table.xlsx', 'w').close()
     
 
 @app.on_event("startup")
@@ -111,6 +123,17 @@ async def demo_post(inp: Msg):
             data[3]=data[3][:-1]
             data[4]=data[4][:-1]
             data.insert(4,name)
+        if len(data) != 6:
+            with open('table2.csv', 'a', newline='') as tbl:
+                writer = csv.writer(tbl)
+                writer.writerow(data)
+                print(data)
+        if "СЧЁТ" in str(data):
+            with open('table2.csv', 'a', newline='') as tbl:
+                writer = csv.writer(tbl)
+                writer.writerow(data)
+                print(data)
+            return {"error_code": 0}
         with open('table.csv', 'a', newline='') as tbl:
             writer = csv.writer(tbl)
             writer.writerow(data)
@@ -133,7 +156,20 @@ async def cmd_start(message: Message):
 async def send_table(message: Message):
     try:
         if message.from_user.id in acl:
-            await bot.send_document(message.from_user.id,open("table.csv", "rb")) 
+            #await bot.send_document(message.from_user.id,open("table.csv", "rb")) 
+            #await bot.send_document(message.from_user.id,open("table2.csv", "rb")) 
+
+            workbook = Workbook('table.xlsx')
+
+            for csvfile in glob.glob(os.path.join('.', '*.csv')):
+                with open(csvfile, 'rt', encoding='utf8') as f:
+                    worksheet = workbook.add_worksheet(csvfile[2:-4] + 'Sheet')
+                    reader = csv.reader(f)
+                    for r, row in enumerate(reader):
+                        for c, col in enumerate(row):
+                            worksheet.write(r, c, col)
+            workbook.close()
+            await bot.send_document(message.from_user.id,open("table.xlsx", "rb")) 
     except Exception as e: print(e)
 
 """ #bot
