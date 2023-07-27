@@ -48,6 +48,8 @@ async def send_csv():
         
         await bot.send_document(id,open("table.xlsx", "rb")) 
     open('table.xlsx', 'w').close()
+    open('table.csv', 'w').close()
+    open('table2.xlsx', 'w').close()
     
 
 @app.on_event("startup")
@@ -107,7 +109,21 @@ async def demo_post(inp: Msg):
         data.insert(0,start_row[0])
         #data.append(end_row[0])
         #data.append(now.strftime('%d/%m/%Y'))
-        if 'зачисление' in data:
+        if "подозрительный перевод" in str(data):
+            with open('table2.csv', 'a', newline='') as tbl:
+                writer = csv.writer(tbl)
+                writer.writerow(data)
+                print(data)
+            data.clear()
+            return {"error_code": 0}
+        if "СЧЁТ" in str(data):
+            with open('table2.csv', 'a', newline='') as tbl:
+                writer = csv.writer(tbl)
+                writer.writerow(data)
+                print(data)
+            data.clear()
+            return {"error_code": 0}
+        elif 'зачисление' in data:
             data.remove('зачисление')
             name = data[3:data.index('Баланс:')+1]
             name = ' '.join(name[1:-1])
@@ -115,6 +131,12 @@ async def demo_post(inp: Msg):
             data[3]=data[3][:-1]
             data[4]=data[4][:-1]
             data.insert(4,name)
+            with open('table.csv', 'a', newline='') as tbl:
+                writer = csv.writer(tbl)
+                writer.writerow(data)
+                print(data)
+            data.clear()
+            return {"error_code": 0}
         elif 'Перевод' in data:
             data.remove('Перевод')
             name = data[data.index('от'):data.index('Баланс:')+1]
@@ -123,18 +145,13 @@ async def demo_post(inp: Msg):
             data[3]=data[3][:-1]
             data[4]=data[4][:-1]
             data.insert(4,name)
-        if len(data) != 6:
-            with open('table2.csv', 'a', newline='') as tbl:
+            with open('table.csv', 'a', newline='') as tbl:
                 writer = csv.writer(tbl)
                 writer.writerow(data)
                 print(data)
-        if "СЧЁТ" in str(data):
-            with open('table2.csv', 'a', newline='') as tbl:
-                writer = csv.writer(tbl)
-                writer.writerow(data)
-                print(data)
+            data.clear()
             return {"error_code": 0}
-        with open('table.csv', 'a', newline='') as tbl:
+        with open('table2.csv', 'a', newline='') as tbl:
             writer = csv.writer(tbl)
             writer.writerow(data)
             print(data)
